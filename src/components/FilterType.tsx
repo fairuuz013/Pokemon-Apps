@@ -1,6 +1,9 @@
 // src/components/FilterType.tsx
 import React from "react";
 import { View, Text, TouchableOpacity, StyleSheet, ScrollView } from "react-native";
+import Animated, { FadeInRight } from "react-native-reanimated";
+
+const AnimatedTouchable = Animated.createAnimatedComponent(TouchableOpacity);
 
 interface Props {
   types: { name: string }[];
@@ -32,20 +35,33 @@ const TYPE_COLOR: Record<string, string> = {
 export default function FilterType({ types, selected, onSelect }: Props) {
   return (
     <View style={styles.container}>
-      <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={styles.scroll}>
+      <ScrollView 
+        horizontal 
+        showsHorizontalScrollIndicator={false} 
+        contentContainerStyle={styles.scroll}
+      >
         {/* All button */}
-        <TouchableOpacity
-          style={[styles.chip, selected === null && styles.chipActive]}
+        <AnimatedTouchable
+          style={[
+            styles.chip,
+            selected === null && [styles.chipActive, { backgroundColor: '#0075BE' }]
+          ]}
           onPress={() => onSelect(null)}
+          entering={FadeInRight.delay(100).springify()}
         >
-          <Text style={[styles.chipText, selected === null && styles.chipTextActive]}>All</Text>
-        </TouchableOpacity>
+          <Text style={[
+            styles.chipText, 
+            selected === null && styles.chipTextActive
+          ]}>
+            All
+          </Text>
+        </AnimatedTouchable>
 
-        {types.map(t => {
+        {types.map((t, index) => {
           const color = TYPE_COLOR[t.name] ?? "#ddd";
           const active = selected === t.name;
           return (
-            <TouchableOpacity
+            <AnimatedTouchable
               key={t.name}
               onPress={() => onSelect(active ? null : t.name)}
               style={[
@@ -53,11 +69,15 @@ export default function FilterType({ types, selected, onSelect }: Props) {
                 { borderColor: color },
                 active && { backgroundColor: color },
               ]}
+              entering={FadeInRight.delay(150 + (index * 50)).springify()}
             >
-              <Text style={[styles.chipText, active && styles.chipTextActive]}>
-                {t.name.toUpperCase()}
+              <Text style={[
+                styles.chipText, 
+                active && styles.chipTextActive
+              ]}>
+                {t.name.charAt(0).toUpperCase() + t.name.slice(1)}
               </Text>
-            </TouchableOpacity>
+            </AnimatedTouchable>
           );
         })}
       </ScrollView>
@@ -67,30 +87,49 @@ export default function FilterType({ types, selected, onSelect }: Props) {
 
 const styles = StyleSheet.create({
   container: {
-    paddingVertical: 8,
+    paddingVertical: 12,
+    backgroundColor: '#FFFFFF',
+    borderBottomWidth: 1,
+    borderBottomColor: '#E0E8FF',
   },
   scroll: {
-    paddingHorizontal: 12,
-    alignItems: "center",
+    paddingHorizontal: 16,
+    alignItems: 'center',
   },
   chip: {
-    paddingVertical: 8,
-    paddingHorizontal: 12,
+    paddingVertical: 10,
+    paddingHorizontal: 16,
     borderRadius: 20,
-    borderWidth: 1,
+    borderWidth: 2,
     borderColor: "#ddd",
-    marginRight: 10,
+    marginRight: 12,
     backgroundColor: "white",
+    shadowColor: "#000",
+    shadowOffset: {
+      width: 0,
+      height: 2,
+    },
+    shadowOpacity: 0.1,
+    shadowRadius: 4,
+    elevation: 3,
   },
   chipActive: {
-    // active bg handled inline using color
+    shadowColor: "#0075BE",
+    shadowOffset: {
+      width: 0,
+      height: 4,
+    },
+    shadowOpacity: 0.3,
+    shadowRadius: 8,
+    elevation: 6,
   },
   chipText: {
-    fontSize: 13,
+    fontSize: 14,
     fontWeight: "600",
     color: "#333",
   },
   chipTextActive: {
     color: "white",
+    fontWeight: "bold",
   },
 });

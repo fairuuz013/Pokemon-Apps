@@ -1,9 +1,9 @@
-import { Pokemon } from "./Pokemon";
+import { PokemonDetailParam } from "./PokemonDetailParam";
 
 export type RootStackParamList = {
   Tabs: undefined;
   HomeStack: undefined;
   PokemonList: undefined;
-  PokemonDetail: { pokemon: Pokemon };
+  PokemonDetail: { pokemon: PokemonDetailParam };
   Favorites: undefined;
 };
